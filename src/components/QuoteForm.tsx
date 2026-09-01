@@ -1,31 +1,46 @@
-// QuoteForm.tsx (provided - drop into src/components/QuoteForm.tsx on Day 2)
-// A controlled form: three pieces of state, and the estimate recalculates on
-// every keystroke. You wire it into App.tsx; you don't modify it.
-import { useState } from "react";
+// QuoteForm.tsx (provided - Day 3, REPLACES src/components/QuoteForm.tsx)
+// The form logic now lives in the useQuoteEstimate hook, and saving a quote
+// dispatches into context via addQuote. The customer sees the same form,
+// plus a working "Save this quote" button. You drop it in; you don't
+// modify it.
 import PremiumDisplay from "./PremiumDisplay";
-import { calculatePremium } from "../premium";
-import type { CoverageType } from "../types";
+import { useQuoteEstimate } from "../hooks/useQuoteEstimate";
+import { useQuotes } from "../context/QuotesContext";
 
 function QuoteForm() {
-  const [type, setType] = useState<CoverageType>("auto");
-  const [age, setAge] = useState(35);
-  const [coverageAmount, setCoverageAmount] = useState(50000);
+  const {
+    type,
+    setType,
+    age,
+    setAge,
+    coverageAmount,
+    setCoverageAmount,
+    premium,
+    error,
+    isValid,
+  } = useQuoteEstimate();
+  const { addQuote } = useQuotes();
 
-  const isValid = age >= 18 && age <= 100 && coverageAmount >= 10000;
-  const premium = isValid ? calculatePremium(type, age, coverageAmount) : null;
-  const error = isValid
-    ? ""
-    : "Enter age 18–100 and coverage of at least $10,000.";
+  function handleSave() {
+    if (!isValid || premium === null) return;
+    addQuote({ id: Date.now(), type, age, coverageAmount, monthlyPremium: premium });
+  }
 
   return (
-    <form className="quote-form" onSubmit={(e) => e.preventDefault()}>
+    <form
+      className="quote-form"
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleSave();
+      }}
+    >
       <h2>Build your quote</h2>
 
       <label htmlFor="coverage-type">Coverage type</label>
       <select
         id="coverage-type"
         value={type}
-        onChange={(e) => setType(e.target.value as CoverageType)}
+        onChange={(e) => setType(e.target.value as typeof type)}
       >
         <option value="auto">Auto</option>
         <option value="home">Home</option>
@@ -55,6 +70,10 @@ function QuoteForm() {
       <PremiumDisplay premium={premium} error={error} />
 
       {error && <p className="message">{error}</p>}
+
+      <button type="submit" className="primary-btn" disabled={!isValid}>
+        Save this quote
+      </button>
     </form>
   );
 }

@@ -4,7 +4,8 @@
 
 import QuoteForm from "./components/QuoteForm";
 import RecentQuotes from "./components/RecentQuotes";
-import { sampleQuotes } from "./sampleQuotes";
+import { QuotesProvider } from "./context/QuotesContext";
+
 
 // The product title is configured through an environment variable, not code.
 // You set the real value in .env on Day 2. Watch the browser tab change.
@@ -14,7 +15,7 @@ document.title = APP_TITLE;
 
 function App() {
   return (
-    <>
+    <QuotesProvider>
       <header className="site-header">
         <div className="brand">Evergreen Insurance</div>
         <nav className="site-nav">
@@ -33,7 +34,8 @@ function App() {
        
         <section className="quote-form-section">
           <QuoteForm />
-          <RecentQuotes quotes={sampleQuotes} />
+          <RecentQuotes />
+     
         </section>
 
       </main>
@@ -41,7 +43,7 @@ function App() {
       <footer className="site-footer">
         <p>&copy; 2026 Evergreen Insurance. Sample training project.</p>
       </footer>
-    </>
+    </QuotesProvider>
   );
 }
 

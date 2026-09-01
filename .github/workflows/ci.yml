@@ -1,0 +1,34 @@
+# Evergreen Quote - provided CI workflow (Phase 2).
+# Capstone learners: enable this by copying it to .github/workflows/ci.yml
+# in your repo and pushing. Do not modify the workflow itself.
+
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    name: Type-check and build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies from the lock file
+        run: npm ci
+
+      - name: Type-check (the contracts must hold)
+        run: npm run type-check
+
+      - name: Production build
+        run: npm run build
