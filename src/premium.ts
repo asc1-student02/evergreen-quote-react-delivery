@@ -5,9 +5,9 @@
 import type { CoverageType } from "./types";
 
 const BASE_RATES: Record<CoverageType, number> = {
-  auto: 80,
-  home: 120,
-  life: 60,
+  auto: 85,
+  home: 130,
+  life: 65,
 };
 
 export function calculatePremium(
