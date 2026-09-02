@@ -1,25 +1,20 @@
-# Go / No-Go: Merge Decision
-
 **Date / time:** Wed 16:30
-**Decision:** ☒ GO
+**Decision:** NO-GO — hold all merges to `main` until it is green again.
 
 ## CI evidence
 
-- Latest run on `delivery/lead`: **green** · link: `https://github.com/alex-rivera/evergreen-quote-react-delivery/actions/runs/16223341876`
-- Workflow file: `.github/workflows/ci.yml`
-- What the workflow actually checked: `npm ci` from the lock file, `npm run type-check` (the TypeScript contracts), `npm run build` (the production build). Note: it does **not** check that the premiums are believable numbers, or that loading/error states are visible; those are human checks, and I did them.
+- **My branch (`delivery/lead`): GREEN.** CI Run #1 passed — type-check (`tsc --noEmit`) clean and production build succeeded. My Day 3 work (data feed, hook + context, CI enabled) is healthy. One non-blocking warning: the pipeline runs on the deprecated Node 20 runtime (logged as a risk, does not fail the build).
+- **`main`: RED.** Run #23 ("Hotfix: adjust home rate per sponsor note") has been failing for ~40 minutes. The type-check step reports `src/premium.ts(10,3): error TS2322: Type 'string' is not assignable to type 'number'` — a rate value was entered as a string instead of a number, so the contract failed and the production build was skipped. `main` cannot build.
+- **Open incident:** support has a reproducible customer report of $3,120/month for $180k home coverage — clearly wrong. Not yet confirmed whether this shares a root cause with the failing hotfix.
 
 ## What "GO" would mean
 
-- Merge `delivery/lead` → `main` Thursday morning, squash, delete branch.
-- Tag the merge commit `phase-2`.
+Merging `delivery/lead` into `main` today. This is defensible on its own terms: my branch is green and does **not** contain the broken hotfix, so my code is not the cause of the failure. A conditional GO would be "merge as soon as `main` is fixed and green." The risk: merging while `main` is red and under active incident investigation layers my changes onto an unstable base and muddies the diagnosis.
 
 ## What "NO-GO" would mean
 
-- Hold the merge until: n/a.
-- Owner of that condition: n/a.
-- Re-evaluate at: n/a.
+Holding merges to `main` until (1) the type-check failure on `main` is fixed and a CI run on `main` goes green, and (2) the hotfix author / on-call confirms whether the $3,120 customer quote shares a root cause with the hotfix or is a separate defect with its own owner. Cost of holding: my green, ready work waits a bit longer — a low cost given the branch isn't going anywhere.
 
 ## My call
 
-**Go.** CI is green on my branch: the contracts type-check and the production build succeeds, the same two things that failed on `main` in this afternoon's incident, which is exactly why I trust them as the gate. The incident on `main` (red type-check after the engineering rate hotfix) is the *engineering team's* fix to land and does not block my branch; I've routed it (see the incident message in the inject response) and confirmed my branch does not contain the offending commit. Human spot-checks done: sponsor rates produce believable numbers, and all three data-feed states (loading / error / loaded) render visibly. What would flip this to no-go: `main` still red at 09:30 Thursday; I won't merge onto a broken `main`.
+**NO-GO.** The distinction that drives this: my branch is green, but `main` is red **and** possibly serving an incorrect customer quote. You do not merge into a broken `main`, even with clean code — it complicates an open incident and adds change to an unstable base. I'll hold, hand the `main` fix and incident diagnosis to engineering on-call, and flip to GO the moment `main` is green again and the customer-quote root cause is understood.

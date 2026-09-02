@@ -1,0 +1,3 @@
+
+Copilot critique
+Adding quote rows (Day 3) I asked Copilot to add two rows to public/quotes.json (one auto, one life). It got the structure right: correct keys, numeric types, sensible ids, and it stayed within the supported coverage types. What it got wrong was the life premium — $342/mo, far above our other life quotes ($84), because Copilot has no knowledge of our sponsor's BASE_RATES. Would I ship it as-is? No. The number is plausible but wrong, and nothing in our pipeline would catch it — type-check and CI only verify it's a number, not that it's correct. I'd replace the premiums with values that match our rate table, and note that data correctness still depends on human review.
