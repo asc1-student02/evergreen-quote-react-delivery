@@ -10,6 +10,7 @@
 `npm run type-check` after each step | More than one type error appearing after a single assembly step |
 | 6 | Version upgraded mid-week breaks the build unexpectedly | Delivery Lead | L | H | Do not upgrade any dependency during the delivery week; treat 
 `package-lock.json` as frozen | Any `npm audit` or Dependabot alert flagging a critical vulnerability |
+| 7 | Coverage-amount input shows a stray leading zero (e.g. 0180000); cosmetic only — premium math is unaffected | Engineering | H | L | Log as known UI issue; leave provided component unedited (assembly, not authoring); flag to engineering as a follow-up fix | If the leading zero ever causes an incorrect premium calculation or blocks form submission |
 
 ## How I'll use this register
 
