@@ -26,6 +26,7 @@
 - **Merged to `main`** via reviewed PR from `delivery/lead`. CI on the merge
   commit: **green** (type-check clean, production build passing).
 - What CI builds is what ships — the green run *is* the evidence.
+- Link to screen shot: https://github.com/asc1-student02/evergreen-quote-react-delivery/blob/main/delivery-leadership-package/_home_labadmin_Pictures_Evergreen%2520Insurance%2520-%2520Get%2520a%2520Quote.html(Surface%20Pro%207).png
 
 
 ## Slide 3: Three key decisions
